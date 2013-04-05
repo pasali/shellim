@@ -62,7 +62,6 @@ CD()
 }
 
 
-
 void
 argv_free()
 {
@@ -80,6 +79,7 @@ run()
         int status;
         pid_t pid;
         pid = fork();
+        
         if (!pid) {
                 int ret;
                 if ( **arguments == '/')
@@ -99,6 +99,7 @@ run()
 
         return 0;
 }
+
 
 int
 parse(char *string)
