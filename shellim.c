@@ -12,6 +12,7 @@
 
 static char * arguments[10];
 static int length_of_arguments;
+static char * komut;
 
 
 void   argv_free();
@@ -22,8 +23,6 @@ int    parse(char *);
 int
 main(void)
 {
-        char *komut;
-        
         while(1) {
                 komut = readline("#> ");
                 if (komut == NULL) {
@@ -119,6 +118,10 @@ parse(char *string)
         }
         if (!strcmp(arguments[0], "cd")) {
                 CD();
+        }
+        if (komut[0] != '/' && strchr(komut, '/')) {
+                printf("full path of program or just name !!!\n");
+                main();
         }
         return 0;
 }
