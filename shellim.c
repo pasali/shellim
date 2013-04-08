@@ -37,23 +37,24 @@ main(void)
                 free(komut);
         }
         atexit(argv_free);
+
         return 0;
 }
 
 
-void 
+void
 CD(void)
 {
         if (!strcmp(arguments[1], "~") || !strcmp(arguments[1], " ") || !strcmp(arguments[1], "")) {
                 chdir(getenv("HOME"));
         }else if (!strcmp(arguments[1], ".")) {
-        
+        /* none */
         }else if (!strcmp(arguments[1], "..")) {
                 char * parent_directory = strrchr(getenv("PWD"), '/');
                 char * pwd = getenv("PWD");
                 int index = parent_directory - pwd;
                 pwd[index] = '\0';
-                chdir(pwd);         
+                chdir(pwd);
         }else
                 chdir(arguments[1]);
         main();
@@ -64,7 +65,7 @@ void
 argv_free(void)
 {
         int i;
-        
+
         for (i = 0;  arguments[i]; i++) {
                 free(arguments[i]);
         }
@@ -77,12 +78,12 @@ run(void)
         int status;
         pid_t pid;
         pid = fork();
-        
+
         if (!pid) {
                 int ret;
                 if ( **arguments == '/')
                         ret = execv(arguments[0], arguments);
-                else 
+                else
                         ret = execvp(arguments[0], arguments);
                 if (ret == -1) {
                         perror("execv");
@@ -106,7 +107,7 @@ parse(char *string)
         char ** str_p = &string;
         char * token;
         int len;
-        
+
         add_history(string);
         for (len = 0; (token = strsep(str_p, " \t")); len++) {
                 arguments[len] = strdup(token);
@@ -122,5 +123,6 @@ parse(char *string)
                 printf("full path of program or just name !!!\n");
                 main();
         }
+
         return 0;
 }
