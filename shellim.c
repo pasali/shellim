@@ -11,12 +11,11 @@
 /*  pasali */
 
 static char * arguments[10];
-static int length_of_arguments;
 static char * komut;
 
 
-void   argv_free();
-int    run();
+void   argv_free(void);
+int    run(void);
 int    parse(char *);
 
 
@@ -35,15 +34,15 @@ main(void)
                         run();
                         argv_free();
                 }
+                free(komut);
         }
         atexit(argv_free);
-        free(komut);
         return 0;
 }
 
 
 void 
-CD()
+CD(void)
 {
         if (!strcmp(arguments[1], "~") || !strcmp(arguments[1], " ") || !strcmp(arguments[1], "")) {
                 chdir(getenv("HOME"));
@@ -62,18 +61,18 @@ CD()
 
 
 void
-argv_free()
+argv_free(void)
 {
-        int j;
+        int i;
         
-        for (j = 0; j < length_of_arguments ; j++) {
-                free(arguments[j]);
+        for (i = 0;  arguments[i]; i++) {
+                free(arguments[i]);
         }
 }
 
 
 int
-run()
+run(void)
 {
         int status;
         pid_t pid;
@@ -91,6 +90,7 @@ run()
                 }
         } else if (pid == -1)
                 perror("fork");
+
         if (waitpid(-1, &status, 0) == -1) {
                 perror("waitpid");
                 exit(EXIT_FAILURE);
@@ -105,14 +105,13 @@ parse(char *string)
 {
         char ** str_p = &string;
         char * token;
-        length_of_arguments = 0;
-        add_history(string);
+        int len;
         
-        while ( ( token = strsep(str_p, " \t") )) {
-                arguments[length_of_arguments] = strdup(token);
-                length_of_arguments++;
+        add_history(string);
+        for (len = 0; (token = strsep(str_p, " \t")); len++) {
+                arguments[len] = strdup(token);
         }
-        arguments[length_of_arguments] = NULL;
+        arguments[len] = NULL;
         if (!strcmp(arguments[0], "exit") || !strcmp(arguments[0], "quit")) {
                 exit(EXIT_SUCCESS);
         }
