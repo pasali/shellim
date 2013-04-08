@@ -33,7 +33,7 @@ struct command_t {
 int
 main(void)
 {
-        while(1) {
+       for ( ; ; ) {
                 komut = readline("#> ");
                 if (komut == NULL) {
                         exit(EXIT_SUCCESS);
