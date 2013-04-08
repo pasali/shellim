@@ -8,15 +8,27 @@
 #include<sys/wait.h>
 
 
-/*  pasali */
 
-static char * arguments[10];
-static char * komut;
+static char *arguments[10];
+static char *komut;
+static int   index_of_command;
 
 
 void   argv_free(void);
 int    run(void);
 int    parse(char *);
+void   command_cd(void);
+void   command_exit(void);
+
+struct command_t {
+       char *command;
+       void (*handler) (void);
+}commands[] = {
+        {"cd", &command_cd},
+        {"quit", &command_exit},
+        {"exit", &command_exit}
+};
+
 
 
 int
@@ -43,12 +55,19 @@ main(void)
 
 
 void
-CD(void)
+command_exit(void)
+{
+        exit(EXIT_SUCCESS);
+}
+
+
+void
+command_cd(void)
 {
         if (!strcmp(arguments[1], "~") || !strcmp(arguments[1], " ") || !strcmp(arguments[1], "")) {
                 chdir(getenv("HOME"));
         }else if (!strcmp(arguments[1], ".")) {
-        /* none */
+                /* none */
         }else if (!strcmp(arguments[1], "..")) {
                 char * parent_directory = strrchr(getenv("PWD"), '/');
                 char * pwd = getenv("PWD");
@@ -113,11 +132,8 @@ parse(char *string)
                 arguments[len] = strdup(token);
         }
         arguments[len] = NULL;
-        if (!strcmp(arguments[0], "exit") || !strcmp(arguments[0], "quit")) {
-                exit(EXIT_SUCCESS);
-        }
-        if (!strcmp(arguments[0], "cd")) {
-                CD();
+        if (!find_command(arguments[0])) {
+                commands[index_of_command].handler();
         }
         if (komut[0] != '/' && strchr(komut, '/')) {
                 printf("full path of program or just name !!!\n");
@@ -125,4 +141,18 @@ parse(char *string)
         }
 
         return 0;
+}
+
+int
+find_command(char * cmd)
+{
+        int i;
+
+        for (i = 0; i < 3 ; i++) {
+                if (!strcmp(cmd, commands[i].command)) {
+                        index_of_command = i;
+                        return 0;
+                }
+        }
+        return 1;
 }
