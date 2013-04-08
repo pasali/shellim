@@ -8,7 +8,6 @@
 #include<sys/wait.h>
 
 
-
 static char *arguments[10];
 static char *komut;
 static int   index_of_command;
@@ -20,6 +19,7 @@ int    parse(char *);
 void   command_cd(void);
 void   command_exit(void);
 
+
 struct command_t {
        char *command;
        void (*handler) (void);
@@ -28,7 +28,6 @@ struct command_t {
         {"quit", &command_exit},
         {"exit", &command_exit}
 };
-
 
 
 int
