@@ -18,7 +18,7 @@ int    run(void);
 int    parse(char *);
 void   command_cd(void);
 void   command_exit(void);
-
+struct command_t find_command(char *);
 
 struct command_t {
        char *command;
@@ -26,7 +26,8 @@ struct command_t {
 }commands[] = {
         {"cd", &command_cd},
         {"quit", &command_exit},
-        {"exit", &command_exit}
+        {"exit", &command_exit},
+        {NULL, NULL}
 };
 
 
@@ -125,14 +126,16 @@ parse(char *string)
         char ** str_p = &string;
         char * token;
         int len;
+        struct command_t ret;
 
         add_history(string);
         for (len = 0; (token = strsep(str_p, " \t")); len++) {
                 arguments[len] = strdup(token);
         }
         arguments[len] = NULL;
-        if (!find_command(arguments[0])) {
-                commands[index_of_command].handler();
+        ret = find_command(arguments[0]);
+        if (ret.command != NULL) {
+                ret.handler();
         }
         if (komut[0] != '/' && strchr(komut, '/')) {
                 printf("full path of program or just name !!!\n");
@@ -142,16 +145,15 @@ parse(char *string)
         return 0;
 }
 
-int
+struct command_t
 find_command(char * cmd)
 {
         int i;
 
         for (i = 0; i < 3 ; i++) {
                 if (!strcmp(cmd, commands[i].command)) {
-                        index_of_command = i;
-                        return 0;
+                        return commands[i];
                 }
         }
-        return 1;
+        return commands[i];
 }
