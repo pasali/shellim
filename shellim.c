@@ -144,7 +144,8 @@ parse(char *string)
 }
 
 struct command_t
-find_command(char * cmd) {
+find_command(char * cmd)
+{
         int i;
 
         for (i = 0; i < 3 ; i++) {
